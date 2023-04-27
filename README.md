@@ -27,7 +27,7 @@ Each class should has defined scope. **If scope is not defined, it's Internal by
 | Scope | Description | Example usage |
 | ----- | ----- | ----- |
 | Api | Classes in that scope can be used in all scopes of the same level, one level above and one level below | Api of Block can be used in Functionality, but not in Module. Api of Module and Shared can be used everywhere. |
-| Internal | **Default scope**. Classes in that scope can be used only inside their wrapper | Internal class in Block can be used only in that specific Block |
+| Internal | **Default scope**. Classes in that scope can be used only inside their wrapper and wrappers below | Internal class in Functionality can be used only in that specific Functionality and in all Blocks of that Functionality |
 
 ### Defining custom scopes
 If you want to customize layers (scopes) in you application (for example to implement some architecture pattern), you can do it by creating `.scope.yml` file for any of specific wrapper (or by using wildcard `*`, and define it for any wrapper types or names).
