@@ -7,8 +7,7 @@ This will help to control dependencies between them, and inform if you try to us
 
 Base concepts are taken from Deptrac nad PhpDocumentor, but this package is combining them and is great tool to run on CI process, and for visualising dependencies inside your code.
 
-## Basic concepts
-### Wrapping classes into modules and functionalities
+## Wrappers
 Main concept is to wrap all classes into functionalities, and functionalities into modules.
 Definitions:
 
@@ -20,6 +19,51 @@ Definitions:
 | 3 | Block | Few classes performing very narrow task inside functionality | Classes responsible of sending email - prepare email to send, and for example call functionality from Mailing module |
 
 Each class should define at least its Module. Other wrappers are not necessary, but it's recommended - if you declare them, you will have to split code into smaller pieces and increase readbility and cleanliness.
+
+## Scopes
+Each class should has defined scope. **If scope is not defined, it's Internal by default**.
+
+### Predefined scopes
+| Scope | Description | Example usage |
+| ----- | ----- | ----- |
+| Api | Classes in that scope can be used in all scopes of the same level, one level above and one level below | Api of Block can be used in Functionality, but not in Module. Api of Module and Shared can be used everywhere. |
+| Internal | **Default scope**. Classes in that scope can be used only inside their wrapper | Internal class in Block can be used only in that specific Block |
+
+### Defining custom scopes
+If you want to customize layers (scopes) in you application (for example to implement some architecture pattern), you can do it by creating `.scope.yml` file for any of specific wrapper (or by using wildcard `*`, and define it for any wrapper types or names).
+
+File defining scopes should be placed in root directory of wrapper its describing, but in general it could be place anywhere in scanned code.
+
+#### Example for new scopes in specific Module named `Cart`:
+```yaml
+# file: cart.scope.yml
+wrappers:
+  - type: Module
+    name: Cart
+    additional_layers:
+      - name: ACL
+        used_in: [Api, Internal, Repository]
+        levels: [Module, Functionality, Block]
+      - name: Repository
+        used_in: [Internal]
+        levels: [Functionality, Block]
+```
+
+#### Example for new scopes in all functionalities from specific module:
+```yaml
+# file: product.scope.yml
+wrappers:
+  - type: Functionality
+    name: *
+    parent_name: Product 
+    additional_layers:
+      - name: Service
+        used_in: [Internal]
+        levels: [Functionality, Block]
+      - name: Entity
+        used_in: [Service]
+        levels: [Block]
+```
 
 ## Throwing errors
 ### Using class outside its scope
